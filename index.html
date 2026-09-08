@@ -429,20 +429,16 @@ footer{
       <div class="case-txt">
         <div class="where mono"><span>Angular</span><span>TypeScript</span><span>30+ sites</span></div>
         <h3>Rebuilding the app every site uses daily</h3>
-        <p>CAPexploitation is the internal application where plants record, store and view their operating data. I reworked the interface and the navigation: the old light-blue header wrapped onto four lines and pushed content off screen, and the modules were buried.</p>
+        <p>CAPexploitation is the internal application where plants record, store and view their operating data. I reworked the interface and the navigation: the old header pushed content off screen at narrow widths, and the modules were buried.</p>
         <p>The new version keeps the navigation on one row, groups the modules into a menu operators can reach in one click, and <strong>holds up on the tablets used on site</strong>.</p>
         <div class="tags">
           <span class="tag">Angular</span><span class="tag">TypeScript</span><span class="tag">SCSS</span><span class="tag">responsive</span>
         </div>
       </div>
-      <div class="case-media stage stack-two">
+      <div class="case-media stage">
         <figure class="screen" style="margin:0">
           <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>before / after · navigation and module menu</span></div>
           <img src="assets/capexploitation.png" alt="Before and after comparison of the CAPexploitation navigation bar and module menu" loading="lazy">
-        </figure>
-        <figure class="screen" style="margin:0">
-          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>the wrapping problem being fixed</span></div>
-          <img src="assets/capexploitation-responsive.png" alt="The previous navigation bar wrapping onto several lines at narrow widths" loading="lazy">
         </figure>
       </div>
     </article>
@@ -505,7 +501,7 @@ footer{
     <article class="case solo">
       <div class="case-txt">
         <div class="where mono"><span>4 plants</span><span>migration</span></div>
-        <h3>Also this year</h3>
+        <h3>Also</h3>
         <p>Migrated dashboards from ImaginData to AVEVA Historian across four plants, and translated existing InfluxQL queries into QuestDB SQL on another site. Built a monthly target system for tonnage, electrical and thermal output that site teams update themselves: one driver panel reads a pasted CSV and pushes six variables to six satellite panels, built entirely inside organisation-admin permissions with no server-side database rights.</p>
         <p>Along the way, an anomaly log covering miscalibrated tags, dead acquisitions and UTC versus local time-zone mismatches, plus the technical notes other developers rebuild these panels from.</p>
       </div>
