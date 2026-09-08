@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jimmy Tremouillault — Backend &amp; Analytics Engineer</title>
+<meta name="description" content="Backend and analytics engineer. Python, SQL, TypeScript. Three years building web tooling and production data pipelines for a network of waste-to-energy plants.">
+<meta name="author" content="Jimmy Tremouillault">
+<meta property="og:title" content="Jimmy Tremouillault — Backend & Analytics Engineer">
+<meta property="og:description" content="Python, SQL and TypeScript. I build the tooling and dashboards behind 30+ waste-to-energy plants.">
+<meta property="og:image" content="assets/otnoc.png">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A121A;
+  --bg-2:#0E1A24;
+  --panel:#12202C;
+  --panel-2:#17293700;
+  --line:#1E3140;
+  --line-soft:#182935;
+  --fg:#E9F1F6;
+  --fg-2:#93A8B8;
+  --fg-3:#63798B;
+  --green:#73BF69;
+  --amber:#FF9830;
+  --blue:#5794F2;
+  --red:#F2495C;
+  --radius:14px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --shell:1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ambient light — one soft source, top left, like a screen glow */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 620px at 12% -8%, rgba(87,148,242,.16), transparent 62%),
+    radial-gradient(700px 520px at 92% 6%, rgba(115,191,105,.09), transparent 60%);
+}
+.shell{position:relative;z-index:1;max-width:var(--shell);margin:0 auto;padding:0 28px}
+
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;font-weight:600;letter-spacing:-.028em;margin:0}
+p{margin:0 0 1em}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px}
+.mono{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+/* ============ nav ============ */
+.nav{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(14px) saturate(150%);
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  background:rgba(10,18,26,.72);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s var(--ease), background .3s var(--ease);
+}
+.nav.stuck{border-bottom-color:var(--line-soft);background:rgba(10,18,26,.88)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:20px;height:64px;max-width:var(--shell);margin:0 auto;padding:0 28px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:600;font-size:.95rem;letter-spacing:-.01em}
+.pulse{
+  width:8px;height:8px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 0 0 rgba(115,191,105,.55);
+  animation:pulse 2.8s var(--ease) infinite;flex:none;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(115,191,105,.5)}
+  70%{box-shadow:0 0 0 9px rgba(115,191,105,0)}
+  100%{box-shadow:0 0 0 0 rgba(115,191,105,0)}
+}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{
+  text-decoration:none;color:var(--fg-2);font-size:.9rem;font-weight:500;
+  transition:color .2s var(--ease);
+}
+.nav-links a:hover{color:var(--fg)}
+
+/* ============ buttons ============ */
+.btn{
+  --btn-bg:var(--panel);
+  display:inline-flex;align-items:center;gap:9px;
+  font:inherit;font-size:.93rem;font-weight:600;letter-spacing:-.005em;
+  padding:12px 21px;border-radius:11px;text-decoration:none;cursor:pointer;
+  border:1px solid var(--line);background:var(--btn-bg);color:var(--fg);
+  position:relative;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 2px 0 0 #060D13, 0 10px 22px -14px rgba(0,0,0,.9);
+  transition:transform .13s var(--ease), box-shadow .13s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+}
+.btn:hover{transform:translateY(-1px);border-color:#2A455A;box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 3px 0 0 #060D13, 0 16px 30px -16px rgba(0,0,0,1)}
+.btn:active{transform:translateY(2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 0 0 0 #060D13}
+.btn.primary{
+  background:linear-gradient(180deg,#6EA9F5,#3C79DE);
+  border-color:#2E63BF;color:#04101F;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 2px 0 0 #1D4489, 0 12px 26px -14px rgba(60,121,222,.95);
+}
+.btn.primary:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 3px 0 0 #1D4489, 0 18px 34px -14px rgba(60,121,222,1)}
+.btn.primary:active{box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 0 0 0 #1D4489}
+.btn svg{width:15px;height:15px;flex:none}
+
+/* ============ hero ============ */
+.hero{padding:88px 0 34px}
+.tagline{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:.78rem;letter-spacing:.01em;color:var(--fg-2);
+  border:1px solid var(--line);background:rgba(18,32,44,.7);
+  padding:6px 13px;border-radius:100px;margin-bottom:26px;
+}
+.tagline b{color:var(--green);font-weight:500}
+h1{
+  font-size:clamp(2.35rem,5.6vw,4.15rem);
+  line-height:1.02;max-width:16ch;margin-bottom:24px;
+}
+h1 .num{
+  background:linear-gradient(115deg,var(--green),var(--blue));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.lede{font-size:clamp(1.02rem,1.6vw,1.16rem);color:var(--fg-2);max-width:60ch;margin-bottom:14px}
+.lede strong{color:var(--fg);font-weight:500}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+
+.readout{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid var(--line-soft);border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(18,32,44,.85),rgba(10,18,26,.5));
+  margin-top:46px;overflow:hidden;
+}
+.readout div{padding:17px 20px;border-right:1px solid var(--line-soft)}
+.readout div:last-child{border-right:0}
+.readout dt{font-size:.7rem;color:var(--fg-3);margin-bottom:3px;font-family:"JetBrains Mono",monospace}
+.readout dd{margin:0;font-size:.92rem;font-weight:500;color:var(--fg)}
+
+/* ============ screens (3D) ============ */
+.stage{perspective:1600px;perspective-origin:50% 24%}
+.screen{
+  position:relative;border-radius:var(--radius);overflow:hidden;
+  border:1px solid var(--line);background:#0C1620;
+  box-shadow:0 34px 70px -34px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.055);
+  transform:rotateX(7deg) translateZ(0) scale(.985);
+  transform-origin:50% 100%;
+  opacity:0;
+  transition:transform .9s var(--ease), opacity .7s var(--ease), box-shadow .5s var(--ease);
+  will-change:transform;
+}
+.screen.on{transform:rotateX(0deg) scale(1);opacity:1}
+.screen:hover{box-shadow:0 40px 80px -32px rgba(0,0,0,1), 0 0 0 1px #2A455A, inset 0 1px 0 rgba(255,255,255,.08)}
+.screen .bar{
+  display:flex;align-items:center;gap:7px;padding:10px 14px;
+  background:linear-gradient(180deg,#16242F,#111E28);border-bottom:1px solid var(--line-soft);
+}
+.dot{width:9px;height:9px;border-radius:50%;background:#2C4152}
+.dot.g{background:#3E5B45}
+.screen .bar span{margin-left:8px;font-size:.71rem;color:var(--fg-3);font-family:"JetBrains Mono",monospace}
+.screen img{display:block;width:100%;height:auto;cursor:zoom-in}
+@media (prefers-reduced-motion:reduce){
+  .screen{transform:none;opacity:1;transition:none}
+}
+
+.hero-screen{margin-top:56px}
+
+/* ============ sections ============ */
+section{padding:96px 0 0}
+.head{margin-bottom:40px}
+.head .kicker{
+  font-family:"JetBrains Mono",monospace;font-size:.73rem;color:var(--blue);
+  display:block;margin-bottom:11px;
+}
+h2{font-size:clamp(1.6rem,3vw,2.2rem);line-height:1.12;max-width:22ch}
+.head p{color:var(--fg-2);max-width:58ch;margin-top:12px}
+
+/* ============ work ============ */
+.case{
+  display:grid;grid-template-columns:1fr 1.08fr;gap:52px;align-items:center;
+  padding:44px 0;border-top:1px solid var(--line-soft);
+}
+.case:first-of-type{border-top:0;padding-top:0}
+.case.flip .case-txt{order:2}
+.case.flip .case-media{order:1}
+.case.solo{grid-template-columns:1fr;gap:0;max-width:76ch}
+.case h3{font-size:1.42rem;line-height:1.2;margin-bottom:14px}
+.case-txt p{color:var(--fg-2);font-size:.98rem}
+.case-txt p strong{color:var(--fg);font-weight:500}
+.where{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--fg-3);
+  display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:14px;
+}
+.where .live{color:var(--green)}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:20px}
+.tag{
+  font-family:"JetBrains Mono",monospace;font-size:.71rem;color:var(--fg-2);
+  border:1px solid var(--line);background:rgba(18,32,44,.6);
+  padding:4px 10px;border-radius:7px;
+  transition:border-color .2s var(--ease),color .2s var(--ease);
+}
+.tag:hover{border-color:#2A455A;color:var(--fg)}
+.repo{
+  display:inline-flex;align-items:center;gap:8px;margin-top:20px;
+  font-size:.88rem;font-weight:600;text-decoration:none;color:var(--fg);
+  border:1px solid var(--line);border-radius:10px;padding:9px 15px;
+  background:var(--panel);
+  transition:border-color .2s var(--ease), transform .15s var(--ease), background .2s var(--ease);
+}
+.repo:hover{border-color:var(--green);transform:translateY(-1px);background:#152634}
+.repo svg{width:15px;height:15px}
+.stack-two{display:grid;gap:16px}
+.slot{
+  border:1px dashed #2A455A;border-radius:var(--radius);
+  padding:34px 24px;text-align:center;color:var(--fg-3);font-size:.85rem;
+  background:repeating-linear-gradient(45deg,rgba(18,32,44,.5) 0 12px,rgba(10,18,26,.5) 12px 24px);
+}
+.slot code{color:var(--amber);font-family:"JetBrains Mono",monospace;font-size:.82rem}
+
+/* ============ toolkit ============ */
+.toolkit{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden}
+.tk{background:var(--bg-2);padding:28px 26px}
+.tk h3{font-size:1.02rem;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.tk h3::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--blue)}
+.tk:nth-child(2) h3::before{background:var(--green)}
+.tk:nth-child(3) h3::before{background:var(--amber)}
+.tk ul{margin:0;padding:0;list-style:none}
+.tk li{font-size:.92rem;color:var(--fg-2);padding:5px 0;border-bottom:1px solid rgba(30,49,64,.5)}
+.tk li:last-child{border-bottom:0}
+
+/* ============ background ============ */
+.roles{display:grid;gap:0}
+.role{
+  display:grid;grid-template-columns:190px 1fr;gap:32px;
+  padding:26px 0;border-top:1px solid var(--line-soft);
+  transition:background .25s var(--ease);
+}
+.role:hover{background:rgba(18,32,44,.4)}
+.role .when{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--fg-3);padding-top:3px}
+.role h3{font-size:1.08rem;margin-bottom:5px}
+.role .org{color:var(--blue)}
+.role p{color:var(--fg-2);font-size:.93rem;margin:0;max-width:62ch}
+
+/* ============ contact ============ */
+.contact{padding:96px 0 0}
+.card{
+  border:1px solid var(--line);border-radius:20px;padding:46px 44px;
+  background:linear-gradient(150deg,#13222E,#0B141D 70%);
+  box-shadow:0 34px 70px -40px rgba(0,0,0,1), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.card h2{margin-bottom:14px}
+.card p{color:var(--fg-2);max-width:52ch}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+
+footer{
+  margin-top:96px;border-top:1px solid var(--line-soft);
+  padding:26px 0 46px;color:var(--fg-3);font-size:.82rem;
+  display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;
+}
+
+/* ============ lightbox ============ */
+.lb{
+  position:fixed;inset:0;z-index:100;display:none;
+  align-items:center;justify-content:center;padding:28px;
+  background:rgba(4,9,13,.94);backdrop-filter:blur(6px);cursor:zoom-out;
+}
+.lb.open{display:flex;animation:fade .22s var(--ease)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.lb img{max-width:100%;max-height:92vh;border-radius:10px;border:1px solid var(--line)}
+.lb-close{
+  position:absolute;top:20px;right:24px;background:var(--panel);color:var(--fg);
+  border:1px solid var(--line);border-radius:9px;padding:8px 14px;font:inherit;font-size:.85rem;cursor:pointer;
+}
+
+/* ============ responsive ============ */
+@media (max-width:900px){
+  .case,.case.flip{grid-template-columns:1fr;gap:26px}
+  .case.flip .case-txt,.case.flip .case-media{order:0}
+  .toolkit{grid-template-columns:1fr}
+  .readout{grid-template-columns:repeat(2,1fr)}
+  .readout div:nth-child(2){border-right:0}
+  .readout div:nth-child(1),.readout div:nth-child(2){border-bottom:1px solid var(--line-soft)}
+  .role{grid-template-columns:1fr;gap:6px}
+  .nav-links a:not(.btn){display:none}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .shell,.nav-in{padding:0 20px}
+  .hero{padding:56px 0 20px}
+  section{padding:68px 0 0}
+  .card{padding:32px 24px}
+  .readout{grid-template-columns:1fr}
+  .readout div{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .readout div:last-child{border-bottom:0}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top"><span class="pulse"></span>Jimmy Tremouillault</a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#background">Background</a>
+      <a class="btn" href="mailto:jimmy.tremouillault.pro@gmail.com">Email me</a>
+    </div>
+  </div>
+</nav>
+
+<div class="shell" id="top">
+
+  <header class="hero">
+    <div class="tagline"><span class="pulse"></span><b>Open to work</b> · remote only · from October 2027</div>
+
+    <h1>I build the software behind <span class="num">30+</span> waste-to-energy plants.</h1>
+
+    <p class="lede">Three years as an apprentice developer and analytics engineer at <strong>Paprec Énergie</strong>. Python, SQL and TypeScript, equally at home shipping a Flask application or fixing a Grafana panel that queries an industrial historian.</p>
+    <p class="lede">Looking for a junior backend or analytics engineering role in a remote-first team.</p>
+
+    <div class="hero-cta">
+      <a class="btn primary" href="#work">See the work</a>
+      <a class="btn" href="assets/jimmy-tremouillault-cv.pdf" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download CV
+      </a>
+      <a class="btn" href="https://github.com/JimmyTRMT" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.6 5.6.6 11.9c0 5 3.3 9.3 7.8 10.8.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6a11.4 11.4 0 0 0 7.8-10.8C23.4 5.6 18.3.5 12 .5z"/></svg>
+        GitHub
+      </a>
+    </div>
+
+    <dl class="readout">
+      <div><dt>based in</dt><dd>Toulon area, France</dd></div>
+      <div><dt>currently</dt><dd>Paprec Énergie, 2024–2027</dd></div>
+      <div><dt>studying</dt><dd>SeaTech, Univ. of Toulon</dd></div>
+      <div><dt>english</dt><dd>B2 — TOEIC 875</dd></div>
+    </dl>
+
+    <div class="stage hero-screen">
+      <figure class="screen" style="margin:0">
+        <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>grafana / OTNOC — real-time operating faults</span></div>
+        <img src="assets/otnoc.png" alt="Two Grafana OTNOC panels listing operating faults with start time, end time, duration and fault code" loading="eager">
+      </figure>
+    </div>
+  </header>
+
+  <section id="work">
+    <div class="head">
+      <span class="kicker">01 — selected work</span>
+      <h2>Things that run in production, not demos.</h2>
+      <p>Everything below is in daily use by plant operators. Screenshots come from the technical notes I wrote for the teams who maintain these panels after me. Client data, tag names and site names are masked throughout.</p>
+    </div>
+
+    <article class="case">
+      <div class="case-txt">
+        <div class="where mono"><span class="live">● in production</span><span>Python</span><span>open source</span></div>
+        <h3>A code generator for Grafana panels</h3>
+        <p>The OTNOC panel lists a plant's operating faults in real time. Building one by hand meant writing the SQL query, the HTML, the CSS and the JavaScript render logic, then repeating all of it for the next site.</p>
+        <p>I wrote a Python tool that reads an Excel configuration sheet and outputs every block ready to paste, including the query variant needed for tags containing dots. <strong>A new site goes from a day of manual work to a few minutes.</strong></p>
+        <a class="repo" href="https://github.com/JimmyTRMT/Otnoc_Grafana_Generator" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.6 5.6.6 11.9c0 5 3.3 9.3 7.8 10.8.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6a11.4 11.4 0 0 0 7.8-10.8C23.4 5.6 18.3.5 12 .5z"/></svg>
+          Otnoc_Grafana_Generator
+        </a>
+        <div class="tags">
+          <span class="tag">Python</span><span class="tag">openpyxl</span><span class="tag">T-SQL</span><span class="tag">Grafana</span><span class="tag">HTML / CSS / JS</span>
+        </div>
+      </div>
+      <div class="case-media stage">
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>OTNOC · lines L1 and L2</span></div>
+          <img src="assets/otnoc.png" alt="OTNOC fault tables for two production lines" loading="lazy">
+        </figure>
+      </div>
+    </article>
+
+    <article class="case flip">
+      <div class="case-txt">
+        <div class="where mono"><span class="live">● in production</span><span>AVEVA Historian</span><span>safety</span></div>
+        <h3>Turning a raw pressure reading into a safety event</h3>
+        <p>These panels do not read a signal that says "explosion detected". They take an ordinary analogue measurement, a pressure in mBar or a CO concentration, and compare it to a threshold. The conclusion is derived, not measured.</p>
+        <p>The filtering happens in SQL Server before a single row leaves the server, timestamps are pinned to UTC on both sides to stop the browser silently shifting an hour, and the render logic finds columns by name and type so it survives Grafana reordering them. <strong>I documented the threshold as the fragile part</strong>, because a badly calibrated one changes what counts as an event with nothing to signal it.</p>
+        <div class="tags">
+          <span class="tag">OPENQUERY</span><span class="tag">SQL Server</span><span class="tag">UTC handling</span><span class="tag">onRender</span>
+        </div>
+      </div>
+      <div class="case-media stage">
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>detection panel · pressure threshold</span></div>
+          <img src="assets/safety-detection.png" alt="Grafana table listing detection date, time and pressure in mBar above the configured threshold" loading="lazy">
+        </figure>
+      </div>
+    </article>
+
+    <article class="case">
+      <div class="case-txt">
+        <div class="where mono"><span class="live">● in production</span><span>shift dashboard v2</span></div>
+        <h3>One measurement, three ways to read it</h3>
+        <p>Operators needed the current shift at a glance and yesterday for comparison. For each quantity, three panels share the same source: an instant value, the current day against a fixed threshold line, and the previous day with its own average drawn across it.</p>
+        <p>That flat average line is a <strong>CROSS JOIN</strong> with no join condition, replicating a single aggregate across every row of the series, with a field override hiding the column that only exists to carry it.</p>
+        <div class="tags">
+          <span class="tag">Grafana</span><span class="tag">CROSS JOIN</span><span class="tag">field overrides</span><span class="tag">gauges</span>
+        </div>
+      </div>
+      <div class="case-media stage stack-two">
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>shift averages · boilers, turbine, heat network</span></div>
+          <img src="assets/shift-gauges.png" alt="Grafana dashboard with gauges and sparklines for boiler flow, electrical power and thermal delivery" loading="lazy">
+        </figure>
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>instant · current day · previous day</span></div>
+          <img src="assets/shift-trends.png" alt="Three panels showing an instant value, the current day trend and the previous day with its average line" loading="lazy">
+        </figure>
+      </div>
+    </article>
+
+    <article class="case flip">
+      <div class="case-txt">
+        <div class="where mono"><span>Angular</span><span>TypeScript</span><span>30+ sites</span></div>
+        <h3>Rebuilding the app every site uses daily</h3>
+        <p>CAPexploitation is the internal application where plants record, store and view their operating data. I reworked the interface and the navigation: the old light-blue header wrapped onto four lines and pushed content off screen, and the modules were buried.</p>
+        <p>The new version keeps the navigation on one row, groups the modules into a menu operators can reach in one click, and <strong>holds up on the tablets used on site</strong>.</p>
+        <div class="tags">
+          <span class="tag">Angular</span><span class="tag">TypeScript</span><span class="tag">SCSS</span><span class="tag">responsive</span>
+        </div>
+      </div>
+      <div class="case-media stage stack-two">
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>before / after · navigation and module menu</span></div>
+          <img src="assets/capexploitation.png" alt="Before and after comparison of the CAPexploitation navigation bar and module menu" loading="lazy">
+        </figure>
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>the wrapping problem being fixed</span></div>
+          <img src="assets/capexploitation-responsive.png" alt="The previous navigation bar wrapping onto several lines at narrow widths" loading="lazy">
+        </figure>
+      </div>
+    </article>
+
+    <article class="case">
+      <div class="case-txt">
+        <div class="where mono"><span>Power Query</span><span>Power BI</span><span>reporting</span></div>
+        <h3>Reports the sites get without asking for them</h3>
+        <p>Plants needed their anomaly and round data as a file they could open, not another dashboard to log into. I pulled it straight from the production database in Power Query, with the reporting period passed in as parameters, and automated the Excel output down to the PDF export.</p>
+        <p>The same data feeds <strong>Power BI reports connected to the production databases</strong> for the teams who prefer to explore it.</p>
+        <div class="tags">
+          <span class="tag">Power Query / M</span><span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">DAX</span><span class="tag">Excel automation</span>
+        </div>
+      </div>
+      <div class="case-media stage stack-two">
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>power query · parameterised SQL source</span></div>
+          <img src="assets/power-query.png" alt="Power Query M source querying the anomaly and round tables with date parameters" loading="lazy">
+        </figure>
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>power bi · outage indicators, actual vs budget</span></div>
+          <img src="assets/power-bi-stops.png" alt="Power BI report comparing actual and budgeted outage hours month by month, with figures masked" loading="lazy">
+        </figure>
+        <figure class="screen" style="margin:0">
+          <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>power bi · per-element performance</span></div>
+          <img src="assets/power-bi-elements.png" alt="Power BI report showing monthly performance per element with cumulative curves, figures masked" loading="lazy">
+        </figure>
+      </div>
+    </article>
+
+    <article class="case flip">
+      <div class="case-txt">
+        <div class="where mono"><span>Flask</span><span>Thailand</span><span>open source</span></div>
+        <h3>An annotation platform for a research department</h3>
+        <p>Twelve weeks at Kasetsart University, Sakon Nakhon. The department depended on public datasets because it had no way to build its own. I shipped a self-hosted Flask platform to annotate retinal fundus and waste-sorting images and export GLCM texture features for machine learning.</p>
+        <p>Application factory, five blueprints with an identical shape, guards on <code>before_request</code> rather than per route, CSRF on every POST, and a fail-fast boot that refuses to start on a default secret key. The export pipeline computes 24 GLCM texture features per image and <strong>never returns a 500</strong>: a corrupt file costs one zero-filled row and a log line, not the batch.</p>
+        <p>Deployed on a lab machine over LAN with Waitress so several annotators could work at once. <strong>Delivered with English and French documentation and a conference paper in LNCS format.</strong></p>
+        <a class="repo" href="https://github.com/JimmyTRMT/Dataset_Labeling" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.6 5.6.6 11.9c0 5 3.3 9.3 7.8 10.8.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6a11.4 11.4 0 0 0 7.8-10.8C23.4 5.6 18.3.5 12 .5z"/></svg>
+          Dataset_Labeling
+        </a>
+        <div class="tags">
+          <span class="tag">Flask</span><span class="tag">SQLAlchemy</span><span class="tag">Jinja2</span><span class="tag">GLCM</span><span class="tag">Chart.js</span><span class="tag">Pointer Events</span><span class="tag">app security</span>
+        </div>
+      </div>
+      <div class="case-media stage">
+        <div class="stack-two">
+          <figure class="screen" style="margin:0">
+            <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>live label distribution, straight from a GROUP BY</span></div>
+            <img src="assets/dataset-analytics.png" alt="Analytics dashboard showing label distribution as counts and a doughnut chart" loading="lazy">
+          </figure>
+          <figure class="screen" style="margin:0">
+            <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot g"></i><span>dataset browser · search, paginate, delete</span></div>
+            <img src="assets/dataset-browser.png" alt="Dataset browser listing labeled images with thumbnail, label, author and upload date" loading="lazy">
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <article class="case solo">
+      <div class="case-txt">
+        <div class="where mono"><span>4 plants</span><span>migration</span></div>
+        <h3>Also this year</h3>
+        <p>Migrated dashboards from ImaginData to AVEVA Historian across four plants, and translated existing InfluxQL queries into QuestDB SQL on another site. Built a monthly target system for tonnage, electrical and thermal output that site teams update themselves: one driver panel reads a pasted CSV and pushes six variables to six satellite panels, built entirely inside organisation-admin permissions with no server-side database rights.</p>
+        <p>Along the way, an anomaly log covering miscalibrated tags, dead acquisitions and UTC versus local time-zone mismatches, plus the technical notes other developers rebuild these panels from.</p>
+      </div>
+    </article>
+  </section>
+
+  <section id="toolkit">
+    <div class="head">
+      <span class="kicker">02 — toolkit</span>
+      <h2>What I reach for.</h2>
+    </div>
+    <div class="toolkit">
+      <div class="tk">
+        <h3>Backend &amp; web</h3>
+        <ul>
+          <li>Python</li>
+          <li>Flask — factory, blueprints, SQLAlchemy, CSRF</li>
+          <li>REST APIs, application security</li>
+          <li>TypeScript, Angular</li>
+          <li>HTML, CSS, SCSS</li>
+          <li>C, LabVIEW</li>
+        </ul>
+      </div>
+      <div class="tk">
+        <h3>Data &amp; BI</h3>
+        <ul>
+          <li>SQL — PostgreSQL, T-SQL / SQL Server</li>
+          <li>AVEVA Historian — InSQL, linked servers, OPENQUERY</li>
+          <li>Grafana</li>
+          <li>Power BI, DAX, Power Query</li>
+          <li>QuestDB, InfluxQL</li>
+          <li>Excel automation with PDF export</li>
+        </ul>
+      </div>
+      <div class="tk">
+        <h3>How I work</h3>
+        <ul>
+          <li>Git, GitHub, VS Code</li>
+          <li>Technical notes maintainers can rebuild from</li>
+          <li>Operating procedures written for the client</li>
+          <li>Working with external subcontractors</li>
+          <li>French (native), English B2 — TOEIC 875</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="background">
+    <div class="head">
+      <span class="kicker">03 — background</span>
+      <h2>Where I learned it.</h2>
+    </div>
+    <div class="roles">
+      <div class="role">
+        <div class="when">2024 — 2027</div>
+        <div>
+          <h3>Apprentice Developer &amp; Analytics Engineer, <span class="org">Paprec Énergie</span></h3>
+          <p>La Seyne-sur-Mer, France. Three-year apprenticeship in the engineering office: web tooling and production data pipelines for a network of 30+ waste-to-energy plants.</p>
+        </div>
+      </div>
+      <div class="role">
+        <div class="when">2026 · 12 weeks</div>
+        <div>
+          <h3>Full-Stack Developer Intern, <span class="org">Kasetsart University</span></h3>
+          <p>Sakon Nakhon, Thailand. Built the department's image annotation and feature extraction platform, and taught a CV and cover letter course to Thai engineering students.</p>
+        </div>
+      </div>
+      <div class="role">
+        <div class="when">2024 — 2027</div>
+        <div>
+          <h3>Engineering Degree, Digital Systems — <span class="org">SeaTech, University of Toulon</span></h3>
+          <p>MSc level, through apprenticeship. Ranked first of the year in first year. Software engineering, industrial data systems, cybersecurity.</p>
+        </div>
+      </div>
+      <div class="role">
+        <div class="when">2024 · 14 weeks</div>
+        <div>
+          <h3>Automation Technician Intern, <span class="org">Vandoren</span></h3>
+          <p>Bormes-les-Mimosas, France. Improved machine camera automation on a production line using LabVIEW.</p>
+        </div>
+      </div>
+      <div class="role">
+        <div class="when">2023 · 8 weeks</div>
+        <div>
+          <h3>Robotics Technician Intern, <span class="org">Prolexia</span></h3>
+          <p>La Seyne-sur-Mer, France. Integrated and tested new sensors and actuators on a mobile robot, and wrote the supporting technical documentation.</p>
+        </div>
+      </div>
+      <div class="role">
+        <div class="when">before that</div>
+        <div>
+          <h3>Garry's Mod game servers, <span class="org">G-LUA</span></h3>
+          <p>How I learned to write code other people actually use.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="card">
+      <h2>Remote-first, and starting October 2027.</h2>
+      <p>I work remotely only. If you are hiring a junior backend or analytics engineer, or you need someone who can speak both to a plant operator and to a database, my inbox is open.</p>
+      <div class="links">
+        <a class="btn primary" href="mailto:jimmy.tremouillault.pro@gmail.com">jimmy.tremouillault.pro@gmail.com</a>
+        <a class="btn" href="https://www.linkedin.com/in/jimmytremouillault/" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn" href="https://github.com/JimmyTRMT" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="assets/jimmy-tremouillault-cv.pdf" download>Download CV</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Jimmy Tremouillault — Toulon area, France</span>
+    <span class="mono">built by hand · hosted on GitHub Pages</span>
+  </footer>
+
+</div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Enlarged screenshot">
+  <button class="lb-close" type="button" aria-label="Close">Close</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* nav border once scrolled */
+  var nav = document.getElementById('nav');
+  var onScroll = function(){ nav.classList.toggle('stuck', window.scrollY > 8); };
+  onScroll();
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  /* screens level out as they come into view */
+  var screens = document.querySelectorAll('.screen');
+  if (reduce || !('IntersectionObserver' in window)) {
+    screens.forEach(function(s){ s.classList.add('on'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+      });
+    }, {threshold:.12, rootMargin:'0px 0px -8% 0px'});
+    screens.forEach(function(s){ io.observe(s); });
+  }
+
+  /* lightbox */
+  var lb = document.getElementById('lb'), lbImg = document.getElementById('lb-img');
+  document.querySelectorAll('.screen img').forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src; lbImg.alt = img.alt;
+      lb.classList.add('open'); document.body.style.overflow = 'hidden';
+    });
+  });
+  function close(){ lb.classList.remove('open'); lbImg.src = ''; document.body.style.overflow = ''; }
+  lb.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') close(); });
+})();
+</script>
+
+</body>
+</html>
